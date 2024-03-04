@@ -85,7 +85,17 @@ public class AddFlight {
        System.out.println("Enter departure location:");
        this.setDepartureLocation(scanner.nextLine());
 
-        // Continue for other attributes...
+       System.out.println("Enter arrival location:");
+       this.setArrivalLocation(scanner.nextLine());
+       
+       System.out.println("Enter departure time:");
+       this.setDepartureTime(scanner.nextLine());
+       
+       System.out.println("Enter arrival time:");
+       this.setArrivalTime(scanner.nextLine());
+       
+       System.out.println("Enter price");
+       this.setPrice(scanner.nextDouble());
 	}
 }
 

@@ -32,15 +32,14 @@ public class main {
 	            System.out.println("0. Exit"); // Option to exit
 
 	            System.out.print("Enter choice: ");
-	            int choice = adminchoiceScanner.nextInt(); // Read user choice once
+	            int choice = adminchoiceScanner.nextInt(); // Read user choice
 
 	            switch (choice) {
 	                case 1:
 	                    // Add new flight logic
-	                    System.out.println("Adding new flight...");
 	                    AddFlight addFlight = new AddFlight(); // Create an instance of AddFlight
 	                    addFlight.addFlightDetails(); // Call the method to add flights
-	                    
+	                    System.out.println("Adding new flight...");
 	                    break;
 	                case 2:
 	                    // Update flight details logic
