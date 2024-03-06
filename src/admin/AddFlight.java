@@ -1,4 +1,7 @@
 package admin;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 public class AddFlight {
@@ -75,12 +78,12 @@ public class AddFlight {
 	
 	
 	// Method to add new flight
-	public void addFlightDetails() {
+	public void addFlightDetails(Connection conn) {
 		
        Scanner scanner = new Scanner(System.in); // Using a single scanner for all inputs
 
        System.out.println("Enter flight number:");
-       this.setFlightNumber(scanner.nextLine()); // Correctly using the setter
+       this.setFlightNumber(scanner.nextLine()); // Using setter
 
        System.out.println("Enter departure location:");
        this.setDepartureLocation(scanner.nextLine());
@@ -96,6 +99,35 @@ public class AddFlight {
        
        System.out.println("Enter price");
        this.setPrice(scanner.nextDouble());
+       
+       // With all the details, insert the flight into the database
+    // SQL INSERT statement with placeholders for values to be bound to parameters
+       String sql = "INSERT INTO flights (flightNumber, departureLocation, arrivalLocation, departureTime, arrivalTime, price) VALUES (?, ?, ?, ?, ?, ?)";
+
+       // Auto-closeable try block to manage resources
+       try (PreparedStatement preparedStmt = conn.prepareStatement(sql)) {
+           // Bind values to the parameters of the prepared statement in the specified order
+           preparedStmt.setString(1, this.flightNumber);
+           preparedStmt.setString(2, this.departureLocation);
+           preparedStmt.setString(3, this.arrivalLocation);
+           preparedStmt.setString(4, this.departureTime);
+           preparedStmt.setString(5, this.arrivalTime);
+           preparedStmt.setDouble(6, this.price); // Assuming price is a string as specified in the table, else use setDouble if it's a numeric value
+
+           // Execute the SQL statement and retrieve the number of rows affected
+           int rowsAffected = preparedStmt.executeUpdate();
+
+           // Check the number of inserted rows
+           if (rowsAffected > 0) {
+               System.out.println("Flight added successfully!");
+           } else {
+               System.out.println("No flight was added.");
+           }
+       } catch (SQLException e) {
+           // Handle possible SQLExceptions here
+           System.out.println("An error occurred while attempting to add the flight.");
+           e.printStackTrace();
+       }
 	}
 }
 
