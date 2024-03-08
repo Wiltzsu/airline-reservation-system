@@ -49,7 +49,7 @@ public class Operations {
 	                    break;
 	                case 3:
 	                    // Delete flights logic
-	                    System.out.println("Deleting flights...");
+	                	admin.DeleteFlight.DeleteOneFlight(conn);
 	                    break;
 	                case 4:
                 		admin.ViewFlights.ViewAllFlights(conn);

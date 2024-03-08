@@ -18,6 +18,7 @@ public class ViewFlights {
                 while (rs.next()) {
                 // .next moves the cursor forward one row from its current position.
                 // It returns true if the new current row is valid; false if there are no more rows.
+                	int flightId = rs.getInt("idflightDetails");
                 	String flightNumber = rs.getString("flightNumber");
                 	String departureLocation = rs.getString("departureLocation");
                 	String arrivalLocation = rs.getString("arrivalLocation");
@@ -26,7 +27,8 @@ public class ViewFlights {
                 	Double price = rs.getDouble("price");
                 	
                 	// Print the details to the console
-                	System.out.println("Flight number: " + flightNumber +
+                	System.out.println("Flight ID: " + flightId +
+                			", Flight number: " + flightNumber +
                 			", Departure location: " + departureLocation +
                 			", Arrival location: " + arrivalLocation +
                 			", Dpearture time: " + departureTime +
