@@ -44,8 +44,7 @@ public class Operations {
 	                    break;
 	                    
 	                case 2:
-	                    // Update flight details logic
-	                    System.out.println("Updating flight details...");
+	                    admin.UpdateFlight.UpdateOneFlight(conn);
 	                    break;
 	                case 3:
 	                    // Delete flights logic
