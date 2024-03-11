@@ -94,7 +94,35 @@ public class UpdateFlight {
             		System.out.println("Enter new price (leave blank to keep current: ");
             		int newPrice = scanner.nextInt();
             		
-            		System.out.println("Flight details have been updated!");
+            		// Construct the update statement
+            		String updateDb = "UPDATE flights SET flightNumber = ? WHERE idFlightDetails = ?";
+            		try (PreparedStatement updateStatement = conn.prepareStatement(updateDb)) {
+            			
+            			// Set the parameters for the update statement
+            			// Ternary conditional operator
+            			// Checks whether newFlightNumber is empty an empty string. If it is empty, it means the user didn't provide a new flight number,
+            			// so the current value is retrieved from the database (using rs.getString). rs is the ResultSet containing the data from the database query.
+            			updateStatement.setString(1, newFlightNumber.isEmpty() ? rs.getString("flightNumber") : newFlightNumber);
+            			updateStatement.setString(2, newDepartureLocation.isEmpty() ? rs.getString("departureLocation") : newDepartureLocation);
+            			updateStatement.setString(3, newArrivalLocation.isEmpty() ? rs.getString("arrivalLocation") : newArrivalLocation);
+
+                        // Handle time stamps:
+                        // Check if the input strings are empty and use existing values from the ResultSet if they are
+            			// The isEmpty() checks are used correctly on String objects.
+            			// The LocalDateTime.parse() is used to convert non-empty strings to LocalDateTime objects.
+            			// Converted LocalDateTime objects are further transformed to Timestamp objects for compatibility with SQL operations.
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        Timestamp newDepartureTimestamp = newDepartureTimeStr.isEmpty() ?
+                                rs.getTimestamp("departureTime") :
+                                Timestamp.valueOf(LocalDateTime.parse(newDepartureTimeStr, formatter));
+                        updateStatement.setTimestamp(4, newDepartureTimestamp);
+
+                        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                        Timestamp newArrivalTimestamp = newArrivalTimeStr.isEmpty() ?
+                        		rs.getTimestamp("arrivalTime") :
+                        		Timestamp.valueOf(LocalDateTime.parse(newArrivalTimeStr, formatter2));
+                        updateStatement.setTimestamp(5, newArrivalTimestamp);
+            		}
         		}
             }
             
