@@ -1,5 +1,6 @@
 package admin;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -55,7 +56,7 @@ public class UpdateFlight {
             		System.out.println("Price: " + rs.getBigDecimal("price"));
             		
             		// Ask for updates to each field and apply as necessary
-            		System.out.println("Enter new flight (leave blank to keep current: ");
+            		System.out.println("Enter new flight number (leave blank to keep current): ");
             		String newFlightNumber = scanner.nextLine();
             		
             		System.out.println("Enter new departure location (leave blank to keep current: ");
@@ -92,10 +93,19 @@ public class UpdateFlight {
                     }
             		
             		System.out.println("Enter new price (leave blank to keep current: ");
-            		int newPrice = scanner.nextInt();
+            		String priceInput = scanner.nextLine();
+            		BigDecimal newPrice = null;
+            		
+            		if (!priceInput.isEmpty()) {
+            			try {
+            				newPrice = new BigDecimal(priceInput);
+            			} catch (NumberFormatException e) {
+            				System.out.println("Invalid input for price. Please enter a valid decimal number.");
+            			}
+            		}
             		
             		// Construct the update statement
-            		String updateDb = "UPDATE flights SET flightNumber = ? WHERE idFlightDetails = ?";
+            		String updateDb = "UPDATE flights SET flightNumber = ?, departureLocation = ?, arrivalLocation = ?, departureTime = ?, arrivalTime = ?, price = ? WHERE idFlightDetails = ?";
             		try (PreparedStatement updateStatement = conn.prepareStatement(updateDb)) {
             			
             			// Set the parameters for the update statement
@@ -113,15 +123,35 @@ public class UpdateFlight {
             			// Converted LocalDateTime objects are further transformed to Timestamp objects for compatibility with SQL operations.
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                         Timestamp newDepartureTimestamp = newDepartureTimeStr.isEmpty() ?
+                        		
                                 rs.getTimestamp("departureTime") :
                                 Timestamp.valueOf(LocalDateTime.parse(newDepartureTimeStr, formatter));
+                        
                         updateStatement.setTimestamp(4, newDepartureTimestamp);
 
                         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                         Timestamp newArrivalTimestamp = newArrivalTimeStr.isEmpty() ?
+                        		
                         		rs.getTimestamp("arrivalTime") :
                         		Timestamp.valueOf(LocalDateTime.parse(newArrivalTimeStr, formatter2));
+                        
                         updateStatement.setTimestamp(5, newArrivalTimestamp);
+                        
+                        if (newPrice != null) {
+                        	updateStatement.setBigDecimal(6, newPrice);
+                        } else {
+                        	updateStatement.setBigDecimal(6, rs.getBigDecimal("price"));
+                        }
+                        
+                        updateStatement.setInt(7, flightId);
+                        
+                        // Execute the update
+                        int rowsAffected = updateStatement.executeUpdate();
+                        if (rowsAffected > 0) {
+                        	System.out.println("Flight updated succesfully!");
+                        } else {
+                        	System.out.println("No flight was updated.");
+                        }
             		}
         		}
             }
